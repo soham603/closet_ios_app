@@ -42,26 +42,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(
-              height: 20,
-            ),
             Center(
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 120,
-                    width: 150,
-                    child: Icon(Icons.star),
+                    height: 10,
                   ),
+                  SizedBox(height: 150, width: 200, child: Image.asset('assets/logo.png')),
                   const SizedBox(
                     height: 10,
                   ),
                   Text(
-                    "To Do APP",
-                    style: GoogleFonts.lato(fontSize: 26, fontWeight: FontWeight.bold),
+                    "Closet App",
+                    style: GoogleFonts.lato(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   )
                 ],
               ),
@@ -78,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               //   ),
               // ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
                     const SizedBox(
@@ -109,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         prefixIcon: const Icon(Icons.person),
                       ),
-                      obscureText: true,
+                      obscureText: false,
                     ),
                     SizedBox(
                       height: 10,

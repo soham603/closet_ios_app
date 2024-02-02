@@ -18,7 +18,10 @@ class _HomeScreenState extends State<HomeScreen> {
   // Future to fetch user details
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserDetails() async {
     try {
-      return await FirebaseFirestore.instance.collection("users").doc(currentUser!.uid).get();
+      return await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser!.uid)
+          .get();
     } catch (e) {
       // Handle errors more gracefully
       print("Error fetching user details: $e");
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void signOut() async {
-    if (currentUser != null) {
+    if (currentUser != null && currentUser == null) {
       await FirebaseAuth.instance.signOut();
     }
   }
@@ -82,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // ),
 
           Container(
-            height: 290,
+            height: MediaQuery.of(context).size.height / 3,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
@@ -133,7 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 FutureBuilder(
                   future: getUserDetails(),
-                  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                  builder: (context,
+                      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                          snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     }
@@ -152,18 +157,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           name,
-                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 20),
                         ),
                         Text(
                           email,
-                          style: const TextStyle(color: Colors.white, fontSize: 16),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 16),
                         ),
                       ],
                     );
                   },
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -174,7 +181,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           IconButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const UploadVideo()));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const UploadVideo()));
                               },
                               icon: const Icon(
                                 Icons.add_circle_outline_outlined,
@@ -183,7 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               )),
                           const Text(
                             'Add Outfit',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 15),
                           ),
                         ],
                       ),
@@ -199,7 +213,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             )),
                         const Text(
                           'Edit Profile',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 15),
                         ),
                       ],
                     ),
@@ -210,10 +227,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           const SizedBox(height: 10),
-          const Text("My Outfits", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          const Text("My Outfits",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
           Expanded(
             child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('users').doc(currentUser?.uid).collection('outfits').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(currentUser?.uid)
+                  .collection('outfits')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -232,24 +254,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
 
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Set the number of items in a row
-                    crossAxisSpacing: 1.0, // Set the spacing between items horizontally
-                    mainAxisSpacing: 1.0, // Set the spacing between items vertically
-                    childAspectRatio: 3 / 4, // Set the height to width ratio of items
-                  ),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot document = snapshot.data!.docs[index];
-                    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                return SingleChildScrollView(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Set the number of items in a row
+                      crossAxisSpacing:
+                          1.0, // Set the spacing between items horizontally
+                      mainAxisSpacing:
+                          1.0, // Set the spacing between items vertically
+                      childAspectRatio:
+                          3 / 4, // Set the height to width ratio of items
+                    ),
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot document = snapshot.data!.docs[index];
+                      Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>;
 
-                    return VideoCard(
-                      image: data['image'] ?? '',
-                      title: data['title'] ?? '',
-                      description: data['description'] ?? '',
-                    );
-                  },
+                      return VideoCard(
+                        image: data['image'] ?? '',
+                        title: data['title'] ?? '',
+                        description: data['description'] ?? '',
+                      );
+                    },
+                  ),
                 );
               },
             ),

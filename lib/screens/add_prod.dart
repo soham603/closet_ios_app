@@ -25,8 +25,8 @@ class _UploadVideoState extends State<UploadVideo> {
 
   Future selectFile() async {
     final result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,    // For only one video at a time
-      type: FileType.image,   // For only videos to be selected
+      allowMultiple: false, // For only one video at a time
+      type: FileType.image, // For only videos to be selected
     );
     if (result == null) return;
 
@@ -61,17 +61,14 @@ class _UploadVideoState extends State<UploadVideo> {
 
     // Storing all details in firestore
 
-    await FirebaseFirestore.instance.collection('users').doc(currentUser?.uid).collection('outfits').add({
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser?.uid)
+        .collection('outfits')
+        .add({
       'title': titleController.text,
       'description': descriptionController.text,
       'image': urlDownload,
-    });
-
-    FirebaseFirestore.instance.collection('outfits').add({
-      'title': titleController.text,
-      'description': descriptionController.text,
-      'image': urlDownload,
-      'isPressed': false,
     });
 
     // after upload setting controllers to null for next upload
@@ -140,33 +137,33 @@ class _UploadVideoState extends State<UploadVideo> {
 }
 
 Widget buildProgress(UploadTask? uploadTask) => StreamBuilder<TaskSnapshot>(
-  stream: uploadTask?.snapshotEvents,
-  builder: (context, snapshot) {
-    if (snapshot.hasData) {
-      final data = snapshot.data!;
-      double progress = data.bytesTransferred / data.totalBytes;
+      stream: uploadTask?.snapshotEvents,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final data = snapshot.data!;
+          double progress = data.bytesTransferred / data.totalBytes;
 
-      return SizedBox(
-        height: 50,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            LinearProgressIndicator(
-              color: Colors.green,
-              backgroundColor: Colors.grey,
-              value: progress,
+          return SizedBox(
+            height: 50,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                LinearProgressIndicator(
+                  color: Colors.green,
+                  backgroundColor: Colors.grey,
+                  value: progress,
+                ),
+                Center(
+                  child: Text(
+                    '${(100 * progress).roundToDouble()}%',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-            Center(
-              child: Text(
-                '${(100 * progress).roundToDouble()}%',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return const SizedBox(height: 50);
-    }
-  },
-);
+          );
+        } else {
+          return const SizedBox(height: 50);
+        }
+      },
+    );

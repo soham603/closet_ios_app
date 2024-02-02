@@ -16,7 +16,7 @@ class _Group_screenState extends State<Group_screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
+        toolbarHeight: MediaQuery.of(context).size.height / 16,
         title: const Padding(
           padding: EdgeInsets.only(left: 2, top: 10),
           child: Text(

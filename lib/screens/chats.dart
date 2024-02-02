@@ -16,7 +16,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
+        toolbarHeight: MediaQuery.of(context).size.height / 16,
         title: const Padding(
           padding: EdgeInsets.only(left: 2, top: 10),
           child: Text(
@@ -29,103 +29,108 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-    stream: FirebaseFirestore.instance.collection('users').snapshots(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const CircularProgressIndicator();
-      }
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
 
-      if (snapshot.hasError) {
-        return Center(
-          child: Text('Error: ${snapshot.error}'),
-        );
-      }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
 
-      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-        return const Center(
-          child: Text('No users available.'),
-        );
-      }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text('No users available.'),
+            );
+          }
 
-      // Filter out the current user
-      List<DocumentSnapshot<Map<String, dynamic>>> usersList = snapshot.data!.docs
-          .where((userDoc) => userDoc.id != FirebaseAuth.instance.currentUser?.uid)
-          .toList();
+          // Filter out the current user
+          List<DocumentSnapshot<Map<String, dynamic>>> usersList = snapshot
+              .data!.docs
+              .where((userDoc) =>
+                  userDoc.id != FirebaseAuth.instance.currentUser?.uid)
+              .toList();
 
-      return Column(
-        children: [
-          Column(
+          return Column(
             children: [
-              SizedBox(height: 15,),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 25,
-                child: TextField(
-                  decoration: InputDecoration(
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    filled: true,
-                    fillColor: Colors.white38,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    labelText: "Search ...",
-                    labelStyle: TextStyle(color: Colors.white),
-                    alignLabelWithHint: false,
-                    prefixIcon: Icon(Icons.search),
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 15,
                   ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 25,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        filled: true,
+                        fillColor: Colors.white38,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        labelText: "Search ...",
+                        labelStyle: TextStyle(color: Colors.white),
+                        alignLabelWithHint: false,
+                        prefixIcon: Icon(Icons.search),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: usersList.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot<Map<String, dynamic>> userDoc =
+                        usersList[index];
+                    Map<String, dynamic> userData = userDoc.data()!;
+
+                    return Container(
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Icon(Icons.account_circle, size: 50),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: OnlineIndicator(
+                                    isOnline: false,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListTile(
+                              title: Text(userData['name'] ?? 'Unknown'),
+                              subtitle: Text(userData['email'] ?? ''),
+                              onTap: () {
+                                // Implement navigation to chat screen with selected user
+                                // For example: Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailScreen(user: userData)));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-              SizedBox(height: 10),
             ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: usersList.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot<Map<String, dynamic>> userDoc = usersList[index];
-                Map<String, dynamic> userData = userDoc.data()!;
-
-                return Container(
-                  child: Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(Icons.account_circle, size: 50),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: OnlineIndicator(
-                                isOnline: false,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: ListTile(
-                          title: Text(userData['name'] ?? 'Unknown'),
-                          subtitle: Text(userData['email'] ?? ''),
-                          onTap: () {
-                            // Implement navigation to chat screen with selected user
-                            // For example: Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailScreen(user: userData)));
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    },
-    ),
-
+          );
+        },
+      ),
     );
   }
 }
@@ -135,7 +140,8 @@ class GlowingAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UploadVideo()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => UploadVideo()));
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 22),

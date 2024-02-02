@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intern_asgn_persist/screens/add_prod.dart';
 import 'package:intern_asgn_persist/screens/chats.dart';
 import 'package:intern_asgn_persist/screens/discover.dart';
 import 'package:intern_asgn_persist/screens/group_screen.dart';
@@ -53,13 +52,7 @@ class _ScreenControllerState extends State<ScreenController> {
         child: MotionTabBar(
           initialSelectedTab: "Closet",
           useSafeArea: true,
-          labels: const [
-            "Closet",
-            "Groups",
-            "Discover",
-            "Saved",
-            "Chats"
-          ],
+          labels: const ["Closet", "Groups", "Discover", "Saved", "Chats"],
           icons: const [
             FontAwesomeIcons.circleUser,
             FontAwesomeIcons.peopleGroup,
@@ -70,8 +63,8 @@ class _ScreenControllerState extends State<ScreenController> {
           tabSize: 50,
           tabBarHeight: 55,
           textStyle: const TextStyle(
-            fontSize: 12,
-            color: Colors.black,
+            fontSize: 14,
+            color: Colors.white,
             fontWeight: FontWeight.w800,
           ),
           //tabIconColor: Colors.blue[600]
